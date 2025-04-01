@@ -9,7 +9,10 @@ const TaskSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['not started', 'in progress', 'completed']
+        enum: {
+            values:['not started', 'in progress', 'completed'],
+            message: "Cant assign custom statuses"
+        }
     }
 })
 

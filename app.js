@@ -2,6 +2,7 @@ const express = require('express');
 const dbConnection = require('./config/db');
 require('dotenv').config();
 const cors = require('cors');
+const taskRouter = require('./routes/tasks.routes');
 
 dbConnection();
 app = express();
@@ -14,12 +15,14 @@ app.use(express.urlencoded( {extended: true } ));
 
 const port = 3000;
 
-
-
+//routes
+app.use('/tasks', taskRouter);
 
 app.get('/', (req, res)=>{
     res.send("Hello world");
 });
+
+
 
 app.listen(port, ()=>{
     console.log(`Server is running ${port}`);
