@@ -7,7 +7,7 @@ class TaskServices {
             const insertedTask = await taskModel.insertOne(task);
 
             return res.status(201).json({
-                success:false,
+                success: false,
                 data: insertedTask
             })
 
@@ -21,7 +21,23 @@ class TaskServices {
 
     async getAllTasks(req, res) { 
         try{
-            const tasks = await taskModel.find();
+            const {priority, duedate, sortby } = req.query;
+            const filter = {};
+
+            if(priority) filter.priority = priority;
+            if(duedate) filter.due_date = duedate;
+
+            const sortOrder = {};
+
+            
+            if(sortby){
+                const newsortby = parseInt(sortby);
+                if(newsortby === 1 || newsortby === -1){
+                    sortOrder.due_date = newsortby
+                }
+            }
+            const tasks = await taskModel.find(filter).sort(sortOrder);
+
             console.log(" get request hit");
             return res.status(201).json({
                 success: true, data: tasks

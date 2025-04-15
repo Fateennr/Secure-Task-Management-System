@@ -5,7 +5,10 @@ const TaskSchema = new mongoose.Schema({
     description: String,
     priority: {
         type: String,
-        enum: [ 'urgent', 'moderate', 'less important']
+        enum:{
+            values: [ 'urgent', 'moderate', 'less important'],
+            message: "Invalid priority assignment"
+        } 
     },
     status: {
         type: String,
@@ -13,6 +16,10 @@ const TaskSchema = new mongoose.Schema({
             values:['not started', 'in progress', 'completed'],
             message: "Cant assign custom statuses"
         }
+    },
+    due_date: {
+        type: Date,
+        require: [true, 'Due date is required']
     }
 })
 

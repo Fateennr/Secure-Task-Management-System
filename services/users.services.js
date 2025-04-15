@@ -49,7 +49,7 @@ class UserServices{
 
             if(!passmatch){
                 return res.status(401).json({
-                    message: 'Invalid credentials';
+                    message: 'Invalid credentials'
                 })
             }
 
