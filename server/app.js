@@ -2,19 +2,22 @@ const express = require('express');
 const dbConnection = require('./config/db');
 require('dotenv').config();
 const cors = require('cors');
+
 const taskRouter = require('./routes/tasks.routes');
 const userRouter = require('./routes/user.routes');
 const bodyparser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 dbConnection();
 app = express();
 
 app.use(bodyparser.json());
+app.use(cookieParser());
 
 // basic utilities to test and run the express app
 app.use(cors({
-    origin: process.env.FRONTEND_URI,  // your frontend URL
-    credentials: true                 // allow sending cookies
+    origin: process.env.FRONTEND_URI,  
+    credentials: true              
 }));
 
 // console.log(process.env.FRONTEND_URI);

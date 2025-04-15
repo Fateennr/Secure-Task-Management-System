@@ -70,7 +70,7 @@ class UserServices{
                 }
             );
 
-            res.cookie('token_task', token,{
+            res.cookie('task_token', token,{
                 httpOnly: true
             });
 
