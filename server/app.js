@@ -4,12 +4,21 @@ require('dotenv').config();
 const cors = require('cors');
 const taskRouter = require('./routes/tasks.routes');
 const userRouter = require('./routes/user.routes');
+const bodyparser = require('body-parser');
 
 dbConnection();
 app = express();
 
+app.use(bodyparser.json());
+
 // basic utilities to test and run the express app
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URI,  // your frontend URL
+    credentials: true                 // allow sending cookies
+}));
+
+// console.log(process.env.FRONTEND_URI);
+
 app.use(express.json());
 app.use(express.urlencoded( {extended: true } ));
 // app.use(express.static("public")); 

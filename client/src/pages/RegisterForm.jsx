@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const RegisterForm = () => {
 
@@ -15,11 +16,11 @@ const RegisterForm = () => {
       console.log(formData);
   
       try {
-        const response = await axios.post(`${BACKEND_URI}/user/register`, formData);
+        const response = await axios.post(`${import.meta.env.VITE_API_BACKEND_URI}/user/register`, formData);
         if (response) {
           console.log('User registered:', response.data);
   
-          navigate(`/users/${response.data._id}`); // Corrected dynamic route
+          navigate(`/login`); // Corrected dynamic route
         } else {
           console.error('Error registering user');
         }

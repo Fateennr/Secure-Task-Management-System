@@ -34,6 +34,9 @@ class UserServices{
 
             const { username, password } = req.body;
             
+            console.log(req.body);
+            console.log(username);
+
             const user = await UserModel.findOne({
                 username
             });
