@@ -39,7 +39,7 @@
 ---
 
 ### Task Management Interface
-![Tasks Screenshot](./images/tasks.png)
+![Tasks Screenshot](.client/public/ss.png)
 
 ---
 
