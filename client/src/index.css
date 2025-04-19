@@ -27,8 +27,8 @@ body {
   margin: 0;
   /* display: flex; */
   /* place-items: center; */
-  min-width: 320px;
-  min-height: 100vh;
+  /* min-width: 320px; */
+  /* min-height: 100vh; */
 }
 
 h1 {
@@ -50,6 +50,7 @@ button {
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -75,3 +76,46 @@ button:focus-visible {
   border-left:green 1px solid;
   border-bottom:blue 1px solid;
 }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 15px 30px;
+  }
+
+  .logo {
+    color: #ecf0f1,
+  }
+
+  .logoText {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .navList {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .navItem {
+    margin: 0;
+  }
+
+  .navLink {
+    text-decoration: none;
+    color: #ecf0f1;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.3s;
+  }
+
+  .navLinkHover {
+    background-color: #34495e;
+  }
+

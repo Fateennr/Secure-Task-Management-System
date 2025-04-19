@@ -15,25 +15,42 @@ const UserDashboard = () => {
     status: 'not started',
     due_date: '',
   });
+  const [searchFilters, setSearchFilters] = useState({
+    priority: '',
+    due_date: '',
+    sort_by: '',
+  });
+  
   const [error, setError] = useState('');
 
   // Fetch all tasks for the user
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BACKEND_URI}/tasks/`, {
-          withCredentials: true,
-        });
-
-        console.log("data is ", response.data.data);
-        setTasks(response.data.data);
-      } catch (err) {
-        console.error('Failed to fetch tasks:', err.response?.data?.message || err.message);
-        setError('Failed to load tasks.');
-      }
-    };
     fetchTasks();
   }, []);
+
+  async function fetchTasks(filters = {}){
+    try {
+      const query = new URLSearchParams(filters).toString();
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BACKEND_URI}/tasks/?${query}`,
+        { withCredentials: true }
+      );
+      setTasks(response.data.data);
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err.response?.data?.message || err.message);
+      setError('Failed to load tasks.');
+    }
+  }
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setSearchFilters((prev) => ({ ...prev, [name]: value }));
+    handleSearch();
+  };
+  
+  const handleSearch = () => {
+    fetchTasks(searchFilters);
+  };
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -106,7 +123,6 @@ const UserDashboard = () => {
     }
   };
 
-  // Open edit form with task data
   const openEditForm = (task) => {
     setCurrentTask(task);
     setFormData({
@@ -114,77 +130,77 @@ const UserDashboard = () => {
       description: task.description,
       priority: task.priority,
       status: task.status,
-      due_date: task.due_date.split('T')[0], // Format for input
+      due_date: task.due_date.split('T')[0],
     });
     setShowEditForm(true);
   };
 
   // Task form component
   const TaskForm = ({ isEdit = false, onSubmit }) => (
-    <div style={styles.formOverlay}>
-      <div style={styles.formContainer}>
-        <h2 style={styles.formTitle}>{isEdit ? 'Edit Task' : 'Add New Task'}</h2>
-        {error && <p style={styles.error}>{error}</p>}
+    <div className="formOverlay">
+      <div className="formContainer">
+        <h2 className="formTitle">{isEdit ? 'Edit Task' : 'Add New Task'}</h2>
+        {error && <p className="error">{error}</p>}
         <form onSubmit={onSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Title</label>
+          <div className="formGroup">
+            <label className="label">Title</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              style={styles.input}
+              className="input"
               required
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Description</label>
+          <div className="formGroup">
+            <label className="label">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              style={styles.textarea}
+              className="textarea"
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Priority</label>
+          <div className="formGroup">
+            <label className="label">Priority</label>
             <select
               name="priority"
               value={formData.priority}
               onChange={handleInputChange}
-              style={styles.select}
+              className="select"
             >
               <option value="urgent">Urgent</option>
               <option value="moderate">Moderate</option>
               <option value="less important">Less Important</option>
             </select>
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Status</label>
+          <div className="formGroup">
+            <label className="label">Status</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleInputChange}
-              style={styles.select}
+              className="select"
             >
               <option value="not started">Not Started</option>
               <option value="in progress">In Progress</option>
               <option value="completed">Completed</option>
             </select>
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Due Date</label>
+          <div className="formGroup">
+            <label className="label">Due Date</label>
             <input
               type="date"
               name="due_date"
               value={formData.due_date}
               onChange={handleInputChange}
-              style={styles.input}
+              className="input"
               required
             />
           </div>
-          <div style={styles.formActions}>
-            <button type="submit" style={styles.submitButton}>
+          <div className="formActions">
+            <button type="submit" className="submitButton">
               {isEdit ? 'Update Task' : 'Add Task'}
             </button>
             <button
@@ -195,7 +211,7 @@ const UserDashboard = () => {
                 setCurrentTask(null);
                 resetForm();
               }}
-              style={styles.cancelButton}
+              className="cancelButton"
             >
               Cancel
             </button>
@@ -205,279 +221,102 @@ const UserDashboard = () => {
     </div>
   );
 
-  // Inline CSS styles
-  const styles = {
-    container: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '20px',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      backgroundColor: '#f4f7fa',
-      minHeight: '100vh',
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '20px',
-    },
-    title: {
-      fontSize: '2rem',
-      color: '#333',
-    },
-    addButton: {
-      backgroundColor: '#28a745',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '50%',
-      width: '50px',
-      height: '50px',
-      fontSize: '1.5rem',
-      cursor: 'pointer',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-      transition: 'background-color 0.3s',
-    },
-    addButtonHover: {
-      backgroundColor: '#218838',
-    },
-    taskGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-      gap: '20px',
-    },
-    taskCard: {
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      padding: '20px',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-      transition: 'transform 0.2s',
-    },
-    taskCardHover: {
-      transform: 'translateY(-5px)',
-    },
-    taskTitle: {
-      fontSize: '1.2rem',
-      fontWeight: 'bold',
-      color: '#333',
-      marginBottom: '10px',
-    },
-    taskDetail: {
-      fontSize: '0.9rem',
-      color: '#666',
-      margin: '5px 0',
-    },
-    priority: {
-      padding: '5px 10px',
-      borderRadius: '12px',
-      fontSize: '0.8rem',
-      display: 'inline-block',
-    },
-    priorityUrgent: {
-      backgroundColor: '#f8d7da',
-      color: '#721c24',
-    },
-    priorityModerate: {
-      backgroundColor: '#fff3cd',
-      color: '#856404',
-    },
-    priorityLess: {
-      backgroundColor: '#d4edda',
-      color: '#155724',
-    },
-    status: {
-      padding: '5px 10px',
-      borderRadius: '12px',
-      fontSize: '0.8rem',
-      display: 'inline-block',
-    },
-    statusNotStarted: {
-      backgroundColor: '#e2e3e5',
-      color: '#383d41',
-    },
-    statusInProgress: {
-      backgroundColor: '#cce5ff',
-      color: '#004085',
-    },
-    statusCompleted: {
-      backgroundColor: '#d4edda',
-      color: '#155724',
-    },
-    taskActions: {
-      marginTop: '10px',
-      display: 'flex',
-      gap: '10px',
-    },
-    editButton: {
-      backgroundColor: '#007bff',
-      color: '#fff',
-      border: 'none',
-      padding: '8px 12px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s',
-    },
-    deleteButton: {
-      backgroundColor: '#dc3545',
-      color: '#fff',
-      border: 'none',
-      padding: '8px 12px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s',
-    },
-    formOverlay: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000,
-    },
-    formContainer: {
-      backgroundColor: '#fff',
-      padding: '20px',
-      borderRadius: '8px',
-      width: '100%',
-      maxWidth: '500px',
-      boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
-    },
-    formTitle: {
-      fontSize: '1.5rem',
-      marginBottom: '20px',
-      color: '#333',
-    },
-    formGroup: {
-      marginBottom: '15px',
-    },
-    label: {
-      display: 'block',
-      fontSize: '0.9rem',
-      color: '#333',
-      marginBottom: '5px',
-    },
-    input: {
-      width: '100%',
-      padding: '8px',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '0.9rem',
-    },
-    textarea: {
-      width: '100%',
-      padding: '8px',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '0.9rem',
-      minHeight: '100px',
-      resize: 'vertical',
-    },
-    select: {
-      width: '100%',
-      padding: '8px',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '0.9rem',
-    },
-    formActions: {
-      display: 'flex',
-      gap: '10px',
-      justifyContent: 'flex-end',
-    },
-    submitButton: {
-      backgroundColor: '#28a745',
-      color: '#fff',
-      border: 'none',
-      padding: '10px 20px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s',
-    },
-    cancelButton: {
-      backgroundColor: '#6c757d',
-      color: '#fff',
-      border: 'none',
-      padding: '10px 20px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s',
-    },
-    error: {
-      color: '#dc3545',
-      fontSize: '0.9rem',
-      marginBottom: '10px',
-    },
-  };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>Your Tasks</h1>
+    <div className="container">
+      <div className="header">
+        <h1 className="title">Your Tasks</h1>
         <button
           onClick={() => {
             resetForm();
             setShowAddForm(true);
           }}
-          style={styles.addButton}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = styles.addButtonHover.backgroundColor)}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = styles.addButton.backgroundColor)}
+          className="addButton"
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor ="blue")}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor ="red")}
         >
           +
         </button>
       </div>
+      
+      <div className="formGroup" style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <select name="priority" className="select" value={searchFilters.priority} onChange={handleFilterChange}>
+          <option value="">All Priorities</option>
+          <option value="urgent">Urgent</option>
+          <option value="moderate">Moderate</option>
+          <option value="less important">Less Important</option>
+        </select>
+
+        <input
+          type="date"
+          name="due_date"
+          className="input"
+          value={searchFilters.due_date}
+          onChange={handleFilterChange}
+        />
+
+        <select name="sortby" className="select" value={searchFilters.sort_by} onChange={handleFilterChange}>
+          <option value="1">Ascending</option>
+          <option value="-1">Descending</option>
+        </select>
+
+        <button onClick={handleSearch} className="btn-submit" style={{ padding: '8px 16px' }}>
+          Search
+        </button>
+      </div>
+
+
       {tasks.length === 0 ? (
-        <p style={styles.taskDetail}>No tasks found. Add a new task to get started!</p>
+        <p className="taskDetail">No tasks found. Add a new task to get started!</p>
       ) : (
-        <div style={styles.taskGrid}>
+
+        <div className="taskGrid">
           {tasks.map((task) => (
             <div
               key={task._id}
-              style={styles.taskCard}
-              onMouseOver={(e) => (e.currentTarget.style.transform = styles.taskCardHover.transform)}
+              className="taskCard"
+              onMouseOver={(e) => (e.currentTarget.style.transform = "purple")}
               onMouseOut={(e) => (e.currentTarget.style.transform = 'none')}
             >
-              <h3 style={styles.taskTitle}>{task.title}</h3>
-              <p style={styles.taskDetail}>{task.description || 'No description'}</p>
-              <p style={styles.taskDetail}>
+              <h3 className="taskTitle">{task.title}</h3>
+              <p className="taskDetail">{task.description || 'No description'}</p>
+              <p className="taskDetail">
                 Priority:{' '}
                 <span
-                  style={{
-                    ...styles.priority,
-                    ...(task.priority === 'urgent'
-                      ? styles.priorityUrgent
-                      : task.priority === 'moderate'
-                      ? styles.priorityModerate
-                      : styles.priorityLess),
-                  }}
+                  // style={{
+                  //   "priority":
+                  //     (task.priority === 'urgent'
+                  //     ?"priorityUrgent"
+                  //     : task.priority === 'moderate'
+                  //     ?"priorityModerate"
+                  //     :"priorityLess"),
+                  // }}
                 >
                   {task.priority}
                 </span>
               </p>
-              <p style={styles.taskDetail}>
+              <p className="taskDetail">
                 Status:{' '}
                 <span
-                  style={{
-                    ...styles.status,
-                    ...(task.status === 'not started'
-                      ? styles.statusNotStarted
-                      : task.status === 'in progress'
-                      ? styles.statusInProgress
-                      : styles.statusCompleted),
-                  }}
+                  // style={{
+                  //   .."status,
+                  //   ...(task.status === 'not started'
+                  //     ?"statusNotStarted
+                  //     : task.status === 'in progress'
+                  //     ?"statusInProgress
+                  //     :"statusCompleted),
+                  // }}
                 >
                   {task.status}
                 </span>
               </p>
-              <p style={styles.taskDetail}>
+              <p className="taskDetail">
                 Due: {new Date(task.due_date).toLocaleDateString()}
               </p>
-              <div style={styles.taskActions}>
+              <div className="taskActions">
                 <button
                   onClick={() => openEditForm(task)}
-                  style={styles.editButton}
+                  className="editButton"
                   onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
                   onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
                 >
@@ -485,7 +324,7 @@ const UserDashboard = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task._id)}
-                  style={styles.deleteButton}
+                  className="deleteButton"
                   onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#c82333')}
                   onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#dc3545')}
                 >

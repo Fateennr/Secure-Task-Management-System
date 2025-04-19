@@ -22,14 +22,16 @@ function MainApp() {
 
   return (
     <>
-      <nav>
-        <ul style={{ "background-color" : "red", "display" : "flex" }}>
-          <li style={{"listStyle":"none", "margin-left": "5px"}}><Link to="/">Home</Link></li>
-          <li style={{"listStyle":"none", "margin-left": "5px"}}><Link to="/register">Register Now</Link></li>
+      <nav className="navbar">
+        <div className="logo">
+          <h3 className="logoText">Task Manager</h3>
+        </div>
+        <ul className="navList">
+          <li className="navItem"><Link className="navLink" to="/">Home</Link></li>
+          <li className="navItem"><Link className="navLink" to="/register">Register</Link></li>
+          <li className="navItem"><Link className="navLink" to="/login">Login</Link></li>
         </ul>
       </nav>
-
-      Dashboard
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -50,3 +52,5 @@ const Home = () => (
 );
 
 export default App;
+
+
